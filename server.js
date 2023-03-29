@@ -2,11 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
-const connectDB = require("./config/db");
-const userRoutes = require("./routes/userRoutes");
+const artistRoutes = require("./routes/artistRoutes");
 
 dotenv.config();
-connectDB();
 const app = express();
 
 if (process.env.NODE_ENV === "development") {
@@ -20,7 +18,7 @@ app.get("/", function (req, res) {
   res.send("Backend is running successfully....");
 });
 
-app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/artist", artistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(
