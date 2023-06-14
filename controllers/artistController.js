@@ -1,65 +1,50 @@
 const asyncHandler = require("express-async-handler");
 const axios = require("axios");
-const fs = require('fs');
-const path = require('path');
-const csvWriter = require('csv-writer').createObjectCsvWriter;
-//Login for Users
-const callLastFMApi = async (name) => {
+const fs = require("fs");
+const path = require("path");
+const { sendMail } = require("../helpers/mail");
+const csvWriter = require("csv-writer").createObjectCsvWriter;
+const mailSent = asyncHandler(async (req, res) => {
+  const { front_image, back_image } = req.body;
   try {
-    const apiUrl = `https://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${name}&api_key=ada165e490f08a5fb48e6945c805519d&format=json`;
-    const postData = {
-      name: "test",
+    let mailOptions = {
+      from: `<contact@completegreet.com>`,
+      to: `ruhul.cse7862@gmail.com`,
+      subject: `You have received a new order`,
+      html: ``,
+      attachments: [
+        {
+          filename: "front_image.png",
+          content: Buffer.from(front_image, "base64"),
+          cid: "front_image", //same cid value as in the html img src
+        },
+        {
+          filename: "back_image.png",
+          content: Buffer.from(back_image, "base64"),
+          cid: "back_image", //same cid value as in the html img src
+        },
+      ],
     };
-    const { data } = await axios.post(apiUrl, postData);
-   
-    const artist = data.results.artistmatches;
-    return artist;
-  } catch (error) {
-    console(error);
-    res.status(500).send("Error calling external API");
-  }
-};
-const getArtistInfo = asyncHandler(async (req, res) => {
-  const { name } = req.body;
-  try {
-    const response = await callLastFMApi(name);
-    if (response) {
-      const artists = response.artist;
-      const parsedData = artists.map(artist => {
-        const smallImage = artist.image.find(img => img.size === 'small');
-        return {
-          name: artist.name,
-          mbId: artist.mbid,
-          url: artist.url,
-          image_small: smallImage ? smallImage['#text'] : '',
-        };
-      });
 
-      // Write to CSV
-      const csvFilePath = path.join(__dirname,'..', 'public', `${name}.csv`);
-      const writer = csvWriter({
-        path: csvFilePath,
-        header: [
-          { id: 'name', title: 'name' },
-          { id: 'mbId', title: 'mbid' },
-          { id: 'url', title: 'url' },
-          { id: 'image_small', title: 'image_small' },
-        ],
+    let mailInfo = await sendMail(mailOptions);
+    if (!mailInfo) {
+      return res.status(400).json({
+        error: true,
+        message: "Mail send failed.",
+        data: null,
       });
-      await writer.writeRecords(parsedData);
-      res.json({
-        message: "successfully retrived data",
-        data: response
-      });
-    } else {
-      res.status(202).send(new Error("No data found"));
     }
+    res.status(201).json({
+      error: false,
+      message: "successfully mail sent",
+      data: [],
+    });
   } catch (error) {
-    console.log(error)
-    res.status(500).send("Error calling external API");
+    console.log(error);
+    res.status(500).send("Error calling API");
   }
 });
 
 module.exports = {
-  getArtistInfo,
+  mailSent,
 };
