@@ -9,7 +9,7 @@ const mailSent = asyncHandler(async (req, res) => {
   try {
     let mailOptions = {
       from: `<contact@completegreet.com>`,
-      to: `anasbinsabiet@gmail.com`,
+      to: `ruhul.cse7862@gmail.com`,
       subject: `You have received a new order`,
       html: ``,
       attachments: [
