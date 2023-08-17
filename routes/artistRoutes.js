@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { mailSent } = require("../controllers/artistController");
-router.route("/mail_sent").post(mailSent);
+const { uploadFile } = require("../controllers/artistController");
+const { upload } = require("../middleware/fileUpload");
+router.route("/upload").post(upload, uploadFile);
 
 module.exports = router;

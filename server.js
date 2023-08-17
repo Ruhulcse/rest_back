@@ -21,7 +21,7 @@ app.get("/", function (req, res) {
   res.send("Backend is running successfully....");
 });
 
-app.use("/api/v1/ashtry", artistRoutes);
+app.use("/api/v1", artistRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(
