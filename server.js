@@ -23,7 +23,7 @@ app.get("/", function (req, res) {
 
 app.use("/api/v1", artistRoutes);
 
-const PORT = process.env.PORT || 22;
+const PORT = process.env.PORT || 80;
 app.listen(
   PORT,
   console.log(
