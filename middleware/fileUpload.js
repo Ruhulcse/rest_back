@@ -4,9 +4,11 @@ const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const path = __dirname + "/../public/files/";
-    if (!fs.existsSync(path)) {
-      fs.mkdirSync(path, { recursive: true });
+    if (fs.existsSync(path)) {
+      fs.rmdirSync(path, { recursive: true });
     }
+
+    fs.mkdirSync(path, { recursive: true });
     cb(null, path);
   },
   filename: function (req, file, cb) {
