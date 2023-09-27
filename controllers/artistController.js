@@ -64,6 +64,7 @@ const getFiles = asyncHandler(async (req, res) => {
     } else {
       queryResult = await knex('assets')
         .select()
+        .first()
         .where({ category: category })
         .orderBy('id', 'desc');
     }
